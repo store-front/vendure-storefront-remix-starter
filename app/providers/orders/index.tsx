@@ -1,5 +1,5 @@
 import { useLoaderData } from "@remix-run/react";
-import { DataFunctionArgs } from "@remix-run/server-runtime";
+import { LoaderFunctionArgs } from "@remix-run/server-runtime";
 import React, { createContext, useContext, useState } from "react";
 import { ErrorResult } from "~/generated/graphql";
 import { getSessionStorage } from "~/sessions";
@@ -24,7 +24,8 @@ export const useOrder = () => {
   return useContext(OrderContext);
 };
 
-export const loader = async ({ request }: DataFunctionArgs) => {
+
+export const loader = async ({ request }: LoaderFunctionArgs) => {
   const sessionStorage = await getSessionStorage();
   const session = await sessionStorage.getSession(
     request?.headers.get('Cookie'),

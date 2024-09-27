@@ -13,7 +13,11 @@ import SignInForm from '~/components/form/SignInForm';
 import SignUpForm from '~/components/form/SignUpForm';
 import PasswordForm from '~/components/form/PasswordForm';
 
+import { useActiveOrder } from '~/utils/use-active-order';
+import { useCustomer } from '~/providers/customer';
+
 const AccountButton = () => {
+  const { activeCustomer } = useCustomer();
   const [showSignUp, setShowSignUp] = useState(false);
   const [showPasswordForm, setShowPasswordForm] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
@@ -47,18 +51,31 @@ const AccountButton = () => {
           <ScrollArea className='h-full w-full'>
             <SheetHeader className='sticky top-0 z-10 bg-white px-4 py-4'>
               <SheetTitle className='flex items-center gap-2'>
-                {showPasswordForm ? 'Jelszó visszaállítás' : showSignUp ? 'Regisztráció' : 'Belépés'}
+                {
+                  activeCustomer
+                    ? 'Fíkom'
+                    : showPasswordForm
+                      ? 'Jelszó visszaállítás'
+                      : showSignUp
+                        ? 'Regisztráció'
+                        : 'Belépés'
+                }
               </SheetTitle>
             </SheetHeader>
             <div className='flex flex-col gap-8 px-4 pb-4 pt-8'>
               <div className='rounded-lg bg-primary/5 p-4'>
-                {showPasswordForm ? (
-                  <PasswordForm />
-                ) : showSignUp ? (
-                  <SignUpForm />
+                {activeCustomer ? (
+                  <>Hello customer</>
                 ) : (
-                  <SignInForm />
+                  showPasswordForm ? (
+                  <PasswordForm onSuccess={() => setIsOpen(false)} />
+                  ) : showSignUp ? (
+                    <SignUpForm onSuccess={() => setIsOpen(false)}/>
+                  ) : (
+                    <SignInForm onSuccess={() => setIsOpen(false)}/>
+                  )
                 )}
+                
                 {showPasswordForm ? (
                   <div className='mt-6 text-center'>
                     <Button className='text-base' variant={"link"} size={"default"} onClick={() => setShowPasswordForm(false)}>

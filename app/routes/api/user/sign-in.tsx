@@ -12,7 +12,11 @@ export async function action({ params, request }: ActionFunctionArgs) {
     const result = await login(email, password, rememberMe, { request });
     console.log(result);
     if (result.__typename === 'CurrentUser') {
-      return redirect('/account', { headers: result._headers });
+      return json({
+        success: true,
+        redirectTo: "/account",
+        headers: result._headers,
+      })
     } else {
       return json(result, {
         status: 401,

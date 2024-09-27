@@ -1,5 +1,6 @@
 import gql from 'graphql-tag';
 import {
+  AuthenticateMutation,
   CreateAddressInput,
   LoginMutation,
   LogoutMutation,
@@ -124,6 +125,37 @@ export const requestPasswordReset = async(
   options: QueryOptions,
 ): Promise<RequestPasswordResetMutation['requestPasswordReset']> => {
   return sdk.requestPasswordReset(input, options).then((res) => res.requestPasswordReset);
+};
+
+/**
+ * Facebook login
+ */
+export const authenticateWithFacebook = async (
+  token: string,
+  options: QueryOptions,
+): Promise<WithHeaders<AuthenticateMutation>> => {
+  return sdk.Authenticate({
+    input: { facebook: { token } },
+  }, options).then((res) =>  {
+    return {
+      ...res,
+      _headers: res._headers,
+    };
+  });
+};
+
+export const authenticateWithGoogle = async (
+  token: string,
+  options: QueryOptions,
+): Promise<WithHeaders<AuthenticateMutation>> => {
+  return sdk.Authenticate({
+    input: { google: { token } },
+  }, options).then((res) =>  {
+    return {
+      ...res,
+      _headers: res._headers,
+    };
+  });
 };
 
 gql`
@@ -282,3 +314,30 @@ gql`
     }
 }
 `;
+
+/**
+ * Facebook authentication
+ */
+
+gql`
+  mutation Authenticate($input: AuthenticationInput!) {
+    authenticate(input: $input) {
+        __typename
+        ... on CurrentUser {
+            id
+            identifier
+        }
+        ... on InvalidCredentialsError {
+            errorCode
+            message
+            authenticationError
+        }
+        ... on NotVerifiedError {
+            errorCode
+            message
+        }
+    }
+}
+
+`;
+

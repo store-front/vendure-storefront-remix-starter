@@ -21,7 +21,8 @@ export async function action({ params, request }: ActionFunctionArgs) {
     }
 
     if (result.__typename === 'Success') {
-      return redirect('/success');
+      redirect('/success');
+      return json({ success: true });
     } else {
       const formError = { form: result.message || "An error occurred" };
       return json(formError, { status: 401 });

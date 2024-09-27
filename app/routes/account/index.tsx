@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import dummy from "../../_dummy/dummy_sanitech.json";
 import Breadcrumbs from "~/components/breadcrumbs/Breadcrumbs";
 import Sidebar from "~/components/common/Sidebar";
@@ -13,6 +13,10 @@ import Orders from "./orders/page";
 import Settings from "./settings/page";
 import Subscriptions  from "./subscriptions/page";
 import Shipping from "./addresses/shipping/page";
+import { json, LoaderFunctionArgs, redirect } from "@remix-run/server-runtime";
+import { getActiveCustomerDetails } from "~/providers/customer/customer";
+import { useLoaderData } from "@remix-run/react";
+import { useCustomer } from "~/providers/customer";
 
 const pages = {
   billing: Billing,
@@ -24,11 +28,19 @@ const pages = {
   subscriptions: Subscriptions,
 }
 
+export async function loader({ request }: LoaderFunctionArgs) {
+  const { activeCustomer } = await getActiveCustomerDetails({ request });
+
+  return json({ activeCustomer });
+}
+
 export default function AccountLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const { activeCustomer } = useLoaderData<typeof loader>();
+  const { setActiveCustomer } = useCustomer();
   const [stCurrentPage, setStCurrentPage] = useState("dashboard");
 
   const accountMenuOptions = dummy.accountMenuOptions;
@@ -38,6 +50,10 @@ export default function AccountLayout({
   };
 
   const CurrentChild = (pages as any)[stCurrentPage];
+
+  useEffect(() => {
+    setActiveCustomer(activeCustomer);
+  }, [activeCustomer]);
 
   return (
     <>

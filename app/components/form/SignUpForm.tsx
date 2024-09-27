@@ -3,9 +3,25 @@ import { Button } from '../ui-custom/MyButton';
 import { Input } from '../ui-custom/MyInput';
 import { Switch } from '../ui-custom/MySwitch';
 import { Label } from '../ui/label';
-import { Form } from '@remix-run/react';
+import { Form, useActionData, useNavigate } from '@remix-run/react';
+import { action } from "~/routes/api/user/sign-up";
+import { useEffect } from 'react';
 
-const SignUpForm = () => {
+interface ISignUpFormProps {
+  onSuccess: () => void;
+}
+
+const SignUpForm = ({ onSuccess }: ISignUpFormProps) => {
+  const navigate = useNavigate();
+  const actionData = useActionData<typeof action>();
+
+  useEffect(() => {
+    if (actionData && "success" in actionData) {
+      onSuccess();
+      navigate("/success");
+    }
+  }, [actionData]);
+
   return (
     <Form method="post" action="api/user/sign-up" className='flex flex-col gap-6'>
       <div className='grid w-full items-center'>
