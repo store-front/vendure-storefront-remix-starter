@@ -22,8 +22,6 @@ import { useEffect, useState } from 'react';
 
 import { CartTray } from '~/components/cart/CartTray';
 import { getActiveCustomer } from '~/providers/customer/customer';
-import Footer from '~/components/footer/Footer';
-
 import { useActiveOrder } from '~/utils/use-active-order';
 import Footer from './components/common/footer/Footer';
 import MobileMenu from './components/common/mobile/MobileMenu';
@@ -34,6 +32,11 @@ import { IGlobalLayoutData } from './types/types';
 import { cn } from './utils/cn';
 import { OrderProvider } from './providers/orders';
 import { CustomerProvider } from './providers/customer';
+import { activeChannel } from './providers/channel/channel';
+import { getCollections } from './providers/collections/collections';
+import { getI18NextServer } from './i18next.server';
+import { useTranslation } from 'react-i18next';
+import { useChangeLanguage } from 'remix-i18next';
 
 
 // export const meta: MetaFunction = () => {
